@@ -1,72 +1,147 @@
-# 🔒 WaterFile - Secure Offline Watermarking Tool
+# 🔒 WaterPy (WaterFile) — Secure Offline Watermarking Tool
 
-A lightweight, secure, and fully offline desktop application written in Python using **CustomTkinter** and **PyMuPDF (fitz)**. This application mimics the French government's document securement portal (*filigrane.beta.gouv.fr*) but runs entirely locally on your machine, ensuring complete privacy for your sensitive documents.
-
----
-
-## ✨ Features
-
-- **Multi-Format Support**: Secure both PDF files and standard images (`.png`, `.jpg`, `.jpeg`).
-- **Tiled Diagonal Watermarks**: Applies a staggered repeating diagonal grid of semi-transparent watermark text to prevent cropping or clean extraction.
-- **🛡️ Advanced AI-Resistant Features**:
-  - **Wavy & Curved Text**: Draws character-by-character along a dynamically scaled sine wave, disrupting AI and OCR bounding-box recognition.
-  - **Variable Opacity & Colors**: Randomly fluctuates the color and opacity of individual letters around your target value, leaving behind messy "ghosting" artifacts if AI tools attempt inpainting.
-  - **Faint Static Noise Overlay**: Sprinkles a subtle Gaussian noise/grain mask over the final document, breaking the clean reference pixel blocks that generative AIs need to reconstruction-fill.
-  - **Hollow Outline Text (New)**: Draws character stroke borders but leaves the inner shape fully transparent, maintaining extreme legibility on dense diagrams while remaining fully AI-resistant.
-  - **Pillow-Based Multiply Blend Mode (New)**: Composites the watermark PNG using the Photoshop-style **Multiply** blend mode, ensuring black lines, text, and vector graphics on the page remain perfectly pitch black and never get washed out.
-  - **Shield Occurrence rate (New)**: Adjust the percentage of lines that receive the blurred drop shadow via a slider in the GUI.
-- **Security-First PDF Flattening (Rasterization)**: 
-  - Watermarking vectors in standard PDFs can be easily removed by editing tools.
-  - **WaterFile** prevents this by rendering each watermarked page into a high-quality rasterized image (at 100, 150, or 200 DPI) and reassembling them into a new flat PDF.
-  - **The resulting PDF contains zero extractable text layers or vector objects**, meaning the watermark cannot be selected, edited, or removed.
-- **Real-Time Live Preview**: Instantly updates a scaled, responsive preview of the first page of the document as you edit your text, opacity, rotation, or AI-protection toggles.
-- **Modern UI**: Clean, responsive, and dark/light mode adaptable interface with native widgets, sliders, and progress bars.
-- **100% Offline**: No network connections are made; your files never leave your computer.
+A lightweight, secure, and fully offline desktop application built with Python, **CustomTkinter**, **PyMuPDF (fitz)**, and **Pillow**. Designed to protect sensitive documents (inspired by portals like *filigrane.beta.gouv.fr*), **WaterPy** runs 100% locally on your machine—guaranteeing complete privacy and confidentiality without uploading anything to external servers.
 
 ---
 
-## 🛠️ Code Architecture
+## 🌟 Key Features & Specifications
 
-The project is structured in a clean, modular fashion:
-- [main.py](file:///X:/WaterPy/main.py): The main entry point to launch the application.
-- [gui.py](file:///X:/WaterPy/gui.py): The responsive GUI codebase built using `customtkinter`. It handles the thread pool, resizing logic, and state.
-- [watermark_engine.py](file:///X:/WaterPy/watermark_engine.py): The core processing module containing PIL/Pillow image compositions, PyMuPDF page rendering, and PDF assembly.
+### 📄 Multi-Format Document Support
+- **PDF Documents**: Supports multi-page PDFs with individual page rasterization.
+- **Images**: Supports all standard image formats including `.png`, `.jpg`, `.jpeg`, `.webp`, `.bmp`, and `.tiff`.
+
+### 🛡️ Advanced AI-Resistant Watermark Protections
+Modern generative AI and OCR tools can easily remove standard digital text overlays. WaterPy prevents removal through multiple overlapping defense layers:
+- **Tiled Repeating Grid**: Covers the entire document diagonally to prevent partial cropping.
+- **Wavy & Curved Text**: Renders characters along dynamic sine waves to break OCR and AI bounding-box detection.
+- **Variable Opacity & Color Jitter**: Randomizes opacity and color across individual letters, leaving behind destructive artifacts if AI inpainting is attempted.
+- **Hollow Outline Text**: Outlines text characters without solid fill, maintaining maximum document legibility while defeating automated erasure.
+- **Multiply Blend Mode**: Blends watermarks using Photoshop-style *Multiply* mode to ensure underlying black text, lines, and signatures remain crisp and legible.
+- **Faint Grain & Noise Overlay**: Adds subtle Gaussian grain across the canvas, destroying the flat reference blocks that generative models rely on for reconstruction.
+- **Shield & Drop Shadow Rate**: Customizable shadow layer occurrence to add depth variation.
+
+### 🔒 PDF Flattening & Anti-Extraction Rasterization
+- Standard PDF watermarks can be deleted in PDF editors. WaterPy permanently burns watermarks into the image raster layer at configurable resolutions (**100 DPI, 150 DPI, 200 DPI, or 300 DPI**).
+- The resulting PDF contains **no extractable text layers, fonts, or vector objects**—making watermark removal impossible.
+
+### 🎨 Modern & Responsive UI
+- **Real-Time Live Preview**: Dynamic preview updates instantly as you adjust text, opacity, angles, spacing, or protection toggles.
+- **Presets & Custom Controls**: One-click quick presets (*"Dossier Location"*, *"Confidentiel"*, etc.) alongside fine-grained controls for font size, density, angle, and colors.
+- **Adaptive Dark / Light Theme**: Integrates seamlessly with your system theme via CustomTkinter.
 
 ---
 
-## 🚀 Running the App Locally
+## 📥 Installation & Download Guide
+
+### 🍎 macOS Installation
+
+> [!NOTE]
+> No Python or Git installation is required on the target Mac when using pre-built binaries.
+
+#### 1. Download the App
+1. Go to the [GitHub Repository Actions Tab](https://github.com/lawrencn1/WaterPy/actions).
+2. Click on the latest workflow run (e.g., **Build & Package App**).
+3. Scroll down to the **Artifacts** section and click **`WaterPy-macOS`** to download `WaterPy-macOS.zip` (or download from [Releases](https://github.com/lawrencn1/WaterPy/releases) if published).
+
+#### 2. Install
+1. Double-click `WaterPy-macOS.zip` to extract **`WaterPy.app`**.
+2. Drag and drop **`WaterPy.app`** into your **`Applications`** folder.
+
+#### 3. First-Time Launch (Bypassing macOS Gatekeeper)
+Because WaterPy is built independently without an expensive paid Apple Developer certificate, macOS Gatekeeper may show a warning: *"WaterPy cannot be opened because it is from an unidentified developer."*
+
+Choose **one** of the following easy methods to open it:
+- **Method A (Easiest)**: **Right-click** (or hold <kbd>Control</kbd> and click) `WaterPy.app` in Finder, select **Open**, and click **Open** in the dialog.
+- **Method B (System Settings)**: Open **System Settings** > **Privacy & Security**, scroll down to the *Security* section, and click **"Open Anyway"**.
+- **Method C (Terminal command)**: Open Terminal and run:
+  ```bash
+  xattr -cr /Applications/WaterPy.app
+  ```
+
+---
+
+### 🪟 Windows Installation
+
+#### 1. Download
+1. Go to the [GitHub Repository Actions Tab](https://github.com/lawrencn1/WaterPy/actions).
+2. Click the latest workflow run and download **`WaterPy-Windows`** (contains `WaterPy.exe`), or grab it from the [Releases](https://github.com/lawrencn1/WaterPy/releases) page.
+
+#### 2. Run
+1. Move `WaterPy.exe` to your desired folder (e.g. Desktop or Program Files).
+2. Double-click `WaterPy.exe` to run.
+3. If Windows SmartScreen displays *"Windows protected your PC"*:
+   - Click **More info**
+   - Click **Run anyway**
+
+---
+
+## 💻 Running & Developing from Source
+
+If you want to run or modify the code directly on any platform:
 
 ### 1. Prerequisites
-Ensure you have Python 3.10+ installed.
+- Python 3.10, 3.11, 3.12, or 3.13
+- Git (optional, for cloning)
 
-### 2. Install Dependencies
-Install the required packages from [requirements.txt](file:///X:/WaterPy/requirements.txt):
+### 2. Setup Environment
 ```bash
+# Clone the repository
+git clone https://github.com/lawrencn1/WaterPy.git
+cd WaterPy
+
+# Create and activate a virtual environment
+# Windows:
+python -m venv .venv
+.venv\Scripts\activate
+
+# macOS / Linux:
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 3. Start the Application
-Run the launcher:
+### 3. Run the Application
 ```bash
 python main.py
 ```
 
 ---
 
-## 📦 Packaging to Standalone Windows `.exe`
+## 🔨 Packaging Locally with PyInstaller
 
-To package this application into a single standalone Windows executable that runs without opening an attached console window, use the following **PyInstaller** command:
+The project includes a ready-to-use [`main.spec`](main.spec) configured for cross-platform builds.
 
-```powershell
-pyinstaller --onefile --noconsole --collect-all customtkinter main.py
+### To build locally:
+```bash
+pyinstaller --noconfirm main.spec
 ```
 
-### Explanation of Command Flags:
-- `--onefile` (`-F`): Bundles all python scripts and dependencies into a single, portable executable file (`main.exe` inside the `dist/` directory).
-- `--noconsole` (`-w`): Prevents the Windows Command Prompt (console window) from opening behind the graphical interface when running the app.
-- `--collect-all customtkinter`: **CRITICAL!** Instructs PyInstaller to search for and collect all metadata, themes (JSON files), fonts, and assets embedded in the `customtkinter` package directory so the GUI renders properly with all styles.
+- **On macOS**: Generates `dist/WaterPy.app`
+- **On Windows**: Generates `dist/WaterPy.exe`
 
-*Optional*: If you have a custom icon file (e.g., `app_icon.ico`), you can compile it with:
-```powershell
-pyinstaller --onefile --noconsole --collect-all customtkinter --icon=app_icon.ico main.py
+---
+
+## 📂 Project Structure
+
+```text
+WaterPy/
+├── .github/workflows/
+│   └── build.yml          # Automated multi-platform CI/CD build pipeline
+├── gui.py                 # Responsive CustomTkinter UI & preview renderer
+├── watermark_engine.py    # Core image processing, PIL effects & PyMuPDF engine
+├── main.py                # Main application entry point
+├── main.spec              # PyInstaller multi-platform build specification
+├── requirements.txt       # Python dependencies
+├── .gitignore             # Git ignore rules for builds, caches, and temp files
+└── README.md              # Documentation and user guide
 ```
+
+---
+
+## 🔐 Privacy & Security Guarantee
+
+- **Zero Network Activity**: WaterPy does not make any network requests or telemetry calls.
+- **Local In-Memory / Temporary Processing**: Your documents are processed entirely in local memory and saved directly to the path you specify.
+- **Irreversible Output**: Output PDFs are flattened raster layers, ensuring that original document metadata, hidden vector elements, and private content behind watermarks cannot be recovered.
